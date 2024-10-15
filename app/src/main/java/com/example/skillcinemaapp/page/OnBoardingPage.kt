@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.example.skillcinemaapp.page
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,10 +46,8 @@ val onboardingItems = listOf(
 
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnBoardingPage(onClick: () -> Unit) {
-
 
     val pagerState = rememberPagerState{ onboardingItems.size }
     val coroutineScope = rememberCoroutineScope()
