@@ -1,6 +1,6 @@
 [versions]
 accompanistPagerIndicators = "0.30.1"
-agp = "8.7.1"
+agp = "8.6.0"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
