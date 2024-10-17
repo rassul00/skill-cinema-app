@@ -1,4 +1,4 @@
-package com.example.skillcinemaapp.bottombar
+package com.example.skillcinemaapp.bar
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
