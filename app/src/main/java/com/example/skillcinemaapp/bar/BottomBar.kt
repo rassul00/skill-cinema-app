@@ -21,16 +21,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.skillcinemaapp.R
+import com.example.skillcinemaapp.graph.PageRoute
 import com.example.skillcinemaapp.ui.theme.mainColor
 
 
 sealed class BottomBarItem(val route: String, val icon: Int) {
-    data object Home : BottomBarItem("Home", R.drawable.home_icon)
-    data object Search : BottomBarItem("Search", R.drawable.search_icon)
-    data object Profile : BottomBarItem("Profile", R.drawable.profile_icon)
+    data object Home : BottomBarItem(PageRoute.Home.route, R.drawable.home_icon)
+    data object Search : BottomBarItem(PageRoute.Search.route, R.drawable.search_icon)
+    data object Profile : BottomBarItem(PageRoute.Profile.route, R.drawable.profile_icon)
 }
 
 
@@ -72,6 +72,7 @@ fun RowScope.AddItems(
     navController: NavController
 ) {
     val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
+
     BottomNavigationItem(
         icon = {
             Icon(
@@ -82,13 +83,7 @@ fun RowScope.AddItems(
         },
         selected = isSelected,
         onClick = {
-            navController.navigate(item.route) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = false
-                }
-                launchSingleTop = true
-            }
+            navController.navigate(item.route)
         }
-
     )
 }

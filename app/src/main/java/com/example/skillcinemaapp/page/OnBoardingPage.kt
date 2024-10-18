@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.example.skillcinemaapp.page
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,21 +30,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
-//data class OnBoardingItem(
-//    val image: Int,
-//    val text: String
-//)
 
-//val onboardingItems = listOf(
-//    OnBoardingItem(R.drawable.onboarding1, "Узнавай\nо премьерах"),
-//    OnBoardingItem(R.drawable.onboarding2, "Создавай\nколлекции"),
-//    OnBoardingItem(R.drawable.onboarding3, "Делись\nс друзьями")
-//)
 
 sealed class OnBoardingItem(val image: Int, val text: String) {
-    object OnBoarding1 : OnBoardingItem(R.drawable.onboarding1, "Узнавай\nо премьерах")
-    object OnBoarding2 : OnBoardingItem(R.drawable.onboarding2, "Создавай\nколлекции")
-    object OnBoarding3 : OnBoardingItem(R.drawable.onboarding3, "Делись\nс друзьями")
+    data object OnBoarding1 : OnBoardingItem(R.drawable.onboarding1, "Узнавай\nо премьерах")
+    data object OnBoarding2 : OnBoardingItem(R.drawable.onboarding2, "Создавай\nколлекции")
+    data object OnBoarding3 : OnBoardingItem(R.drawable.onboarding3, "Делись\nс друзьями")
 }
 
 val onboardingItems = listOf(
@@ -57,27 +45,25 @@ val onboardingItems = listOf(
 )
 
 
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
 fun OnBoardingPage(onClick: () -> Unit) {
 
-
-    val pagerState = rememberPagerState { onboardingItems.size }
+    val pagerState = rememberPagerState{ onboardingItems.size }
     val coroutineScope = rememberCoroutineScope()
 
-    LazyColumn(
+    LazyColumn (
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = 46.dp, horizontal = 26.dp),
         verticalArrangement = Arrangement.SpaceBetween
-    ) {
+    ){
 
-
-        item {
+        item{
             Header(onClick)
         }
 
-        item {
+        item{
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
@@ -86,16 +72,17 @@ fun OnBoardingPage(onClick: () -> Unit) {
             }
         }
 
-
-        item {
+        item{
             PagerIndicator(pagerState, coroutineScope)
         }
+
     }
 }
 
 
+
 @Composable
-fun Header(onClick: () -> Unit) {
+fun Header(onClick: () -> Unit){
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,18 +110,18 @@ fun Header(onClick: () -> Unit) {
 
 @Composable
 fun OnBoardingPageImageAndText(page: OnBoardingItem) {
-    Column {
-        Image(
-            painter = painterResource(id = page.image),
-            contentDescription = null,
-        )
-        Text(
-            text = page.text,
-            color = textColor,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.W500
-        )
-    }
+   Column{
+       Image(
+           painter = painterResource(id = page.image),
+           contentDescription = null,
+       )
+       Text(
+           text = page.text,
+           color = textColor,
+           fontSize = 32.sp,
+           fontWeight = FontWeight.W500
+       )
+   }
 }
 
 @Composable

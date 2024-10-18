@@ -21,7 +21,7 @@ fun RootNavGraph() {
 
         composable(Graph.ONBOARDING_PAGE){
             OnBoardingPage(onClick = {
-                navController.navigate(Graph.MAIN_SCREEN_PAGE){
+                navController.navigate(Graph.MAIN_GRAPH){
                     popUpTo(Graph.ONBOARDING_PAGE) {
                         inclusive = true
                     }
@@ -29,7 +29,7 @@ fun RootNavGraph() {
             })
         }
 
-        composable(Graph.MAIN_SCREEN_PAGE){
+        composable(Graph.MAIN_GRAPH){
             MainPage()
         }
     }
