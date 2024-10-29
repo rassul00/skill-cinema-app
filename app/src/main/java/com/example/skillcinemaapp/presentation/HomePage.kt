@@ -67,7 +67,7 @@ fun HomePage(onAllClick: () -> Unit, onFilmClick: () -> Unit){
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(vertical = 50.dp, horizontal = 26.dp)
+            .padding(vertical = 50.dp, horizontal = 26.dp),
     ) {
         item{
             Header()
