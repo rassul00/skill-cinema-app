@@ -1,4 +1,4 @@
-package com.example.skillcinemaapp.graph
+package com.example.skillcinemaapp.domain.graph
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController

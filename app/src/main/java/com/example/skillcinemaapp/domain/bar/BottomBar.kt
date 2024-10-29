@@ -1,4 +1,4 @@
-package com.example.skillcinemaapp.bar
+package com.example.skillcinemaapp.domain.bar
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +23,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.skillcinemaapp.R
-import com.example.skillcinemaapp.graph.PageRoute
+import com.example.skillcinemaapp.domain.graph.Graph
+import com.example.skillcinemaapp.domain.graph.PageRoute
 import com.example.skillcinemaapp.ui.theme.mainColor
 
 

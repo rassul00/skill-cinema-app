@@ -1,4 +1,4 @@
-package com.example.skillcinemaapp.graph
+package com.example.skillcinemaapp.domain.graph
 
 object Graph{
     const val ROOT = "root_graph"

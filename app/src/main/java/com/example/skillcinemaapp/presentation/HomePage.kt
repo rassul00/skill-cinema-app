@@ -47,7 +47,18 @@ fun HomePage(onAllClick: () -> Unit, onFilmClick: () -> Unit){
         Film("", "Близкие", "драма", 7.8),
         Film("", "Близкие", "драма", 7.8),
         Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
+        Film("", "Близкие", "драма", 7.8),
         Film("", "Близкие", "драма", 7.8)
+
     )
 
 
@@ -94,7 +105,7 @@ fun FilmsView(categoryOfFilms: String, films: List<Film>, onAllClick: () -> Unit
         modifier = Modifier
             .padding(bottom = 36.dp)
     ){
-        items(films.size) { index ->
+        items(films.take(8).size) { index ->
             FilmCard(films[index], onFilmClick)
         }
 
