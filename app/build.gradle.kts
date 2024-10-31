@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+
 }
 
 android {
@@ -42,6 +45,12 @@ android {
 dependencies {
 
     implementation(libs.accompanist.pager.indicators)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.okhttp.v4120)
+    implementation(libs.coil.compose)
+    implementation(libs.kotlinx.serialization.json.v160)
 
 
     implementation(libs.androidx.navigation.compose)
