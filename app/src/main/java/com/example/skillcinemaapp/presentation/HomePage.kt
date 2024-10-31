@@ -58,7 +58,6 @@ fun HomePage(onAllClick: () -> Unit, onFilmClick: () -> Unit){
         Film("", "Близкие", "драма", 7.8),
         Film("", "Близкие", "драма", 7.8),
         Film("", "Близкие", "драма", 7.8)
-
     )
 
 
