@@ -1,5 +1,6 @@
-package com.example.skillcinemaapp.page
+package com.example.skillcinemaapp.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,18 +17,26 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.skillcinemaapp.R
 import com.example.skillcinemaapp.data.Film
 import com.example.skillcinemaapp.ui.theme.genreTextColor
@@ -35,65 +44,89 @@ import com.example.skillcinemaapp.ui.theme.mainColor
 import com.example.skillcinemaapp.ui.theme.textColor
 
 
+//    val films = listOf(
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8),
+//        Film("", "Близкие", listOf( Genre("драма") ), 7.8)
+//    )
 
+
+
+
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage(onAllClick: () -> Unit, onFilmClick: () -> Unit){
+fun HomePage(uiState: UiState, onAllClick: (String, List<Film>) -> Unit, onFilmClick: () -> Unit){
 
-    val films = listOf(
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8),
-        Film("", "Близкие", "драма", 7.8)
+    when (uiState) {
+        is UiState.Initial -> {}
+        is UiState.Loading -> LoadingScreen(modifier = Modifier.fillMaxSize())
+        is UiState.Success -> {
+            Scaffold(
+                topBar = {
+                    Header()
+                }
+            ){ paddingValues ->
+                LazyColumn (
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
+                        .padding(top = 30.dp, bottom = 30.dp, start = 26.dp, end = 26.dp),
+                    contentPadding = paddingValues
+                ) {
 
-    )
+                    val categories = listOf("Топ-250", "Популярное", "Фильмы о комиксах", "Сериалы")
 
+                    items(categories.size) { index ->
+                        FilmsView(categories[index], uiState.films[index], { onAllClick(categories[index], uiState.films[index]) }, onFilmClick)
+                    }
 
+                }
+            }
 
-    LazyColumn (
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(vertical = 50.dp, horizontal = 26.dp),
-    ) {
-        item{
-            Header()
         }
-
-        val categories = listOf("Премьеры", "Популярное", "Боевики США", "Топ-250", "Драмы Франции", "Сериалы")
-
-        items(categories.size) { index ->
-            FilmsView(categories[index], films, onAllClick, onFilmClick)
-        }
-
+        is UiState.Error -> ErrorScreen( modifier = Modifier.fillMaxSize())
     }
+
 
 }
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Header(){
-    Text(
-        text = "Skillcinema",
-        color = textColor,
-        fontSize = 24.sp,
-        modifier = Modifier
-            .padding(bottom = 46.dp)
+
+    TopAppBar(
+        title = {
+            Text(
+                text = "Skillcinema",
+                color = textColor,
+                fontSize = 24.sp,
+                modifier = Modifier
+                    .padding(start = 10.dp, top = 25.dp, bottom = 15.dp)
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.White
+        )
     )
+
 }
 
 @Composable
@@ -146,10 +179,9 @@ fun CategoryHeader(category: String, onClick: () -> Unit){
 
 @Composable
 fun FilmCard(film: Film, onClick: () -> Unit){
-    Box (
+    Column (
         modifier = Modifier
             .width(111.dp)
-            .height(194.dp)
             .padding(end = 8.dp)
             .clickable(onClick = onClick)
     ) {
@@ -159,16 +191,14 @@ fun FilmCard(film: Film, onClick: () -> Unit){
                 .clip(RoundedCornerShape(4.dp))
                 .width(111.dp)
                 .height(156.dp)
-                .alpha(0.4f)
-                .background(Color(181, 181, 204))
         ){
-//            Image(
-//                painter = painterResource(posterOfFilm),
-//                contentDescription = null
-//            )
-        }
+            Image(
+                painter = rememberAsyncImagePainter(model = film.poster),
+                contentDescription = null,
+            )
 
-        LabelRating(film.rating)
+            LabelRating(film.rating)
+        }
 
         Text(
             text = film.name,
@@ -176,17 +206,17 @@ fun FilmCard(film: Film, onClick: () -> Unit){
             fontWeight = W400,
             color = textColor,
             modifier = Modifier
-                .align(alignment = Alignment.BottomStart)
-                .padding(bottom = 16.dp)
+//                .align(alignment = Alignment.BottomStart)
+//                .padding(bottom = 16.dp)
         )
 
         Text(
-            text = film.genre,
+            text = film.genres.firstOrNull()?.genre.orEmpty(),
             fontSize = 14.sp,
             fontWeight = W400,
             color = genreTextColor,
-            modifier = Modifier
-                .align(alignment = Alignment.BottomStart)
+//            modifier = Modifier
+//                .align(alignment = Alignment.BottomStart)
         )
     }
 }
@@ -194,7 +224,7 @@ fun FilmCard(film: Film, onClick: () -> Unit){
 
 
 @Composable
-fun LabelRating(rating: Double){
+fun LabelRating(rating: Double?){
    Row {
        Spacer(Modifier.weight(1f))
        Box(
@@ -244,3 +274,36 @@ fun ShowAllButton(onClick: () -> Unit) {
     }
 }
 
+
+
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.background(Color.White),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.loading),
+            contentDescription = stringResource(R.string.loading)
+        )
+    }
+
+}
+
+
+@Composable
+fun ErrorScreen(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.background(Color.White),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.connection_error),
+            contentDescription = ""
+        )
+        Text(text = stringResource(R.string.loading_failed),
+            modifier = Modifier.padding(16.dp))
+    }
+}

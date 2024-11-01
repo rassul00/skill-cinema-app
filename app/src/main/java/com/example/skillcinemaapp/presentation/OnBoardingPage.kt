@@ -1,4 +1,4 @@
-package com.example.skillcinemaapp.page
+package com.example.skillcinemaapp.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -28,8 +28,6 @@ import com.example.skillcinemaapp.ui.theme.textColor
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-
 
 
 sealed class OnBoardingItem(val image: Int, val text: String) {

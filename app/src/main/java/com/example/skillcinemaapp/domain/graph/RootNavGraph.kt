@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.skillcinemaapp.page.MainPage
-import com.example.skillcinemaapp.page.OnBoardingPage
+import com.example.skillcinemaapp.presentation.MainPage
+import com.example.skillcinemaapp.presentation.OnBoardingPage
 
 
 

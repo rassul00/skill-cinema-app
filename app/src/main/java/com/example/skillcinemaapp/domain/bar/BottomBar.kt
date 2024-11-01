@@ -23,7 +23,6 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.skillcinemaapp.R
-import com.example.skillcinemaapp.domain.graph.Graph
 import com.example.skillcinemaapp.domain.graph.PageRoute
 import com.example.skillcinemaapp.ui.theme.mainColor
 
@@ -52,7 +51,7 @@ fun BottomBar(navController: NavController) {
         backgroundColor = colorResource(id = R.color.white),
         modifier = Modifier
             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-            .height(64.dp),
+            .height(60.dp),
     ) {
         Spacer(modifier = Modifier.padding(start = 40.dp))
 
