@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -75,7 +76,7 @@ fun HomePage(uiState: UiState, onAllClick: (String, List<Film>) -> Unit, onFilmC
 
     when (uiState) {
         is UiState.Initial -> {}
-        is UiState.Loading -> LoadingScreen(modifier = Modifier.fillMaxSize())
+        is UiState.Loading -> CircularProgressIndicator()
         is UiState.Success -> {
             Scaffold(
                 topBar = {
