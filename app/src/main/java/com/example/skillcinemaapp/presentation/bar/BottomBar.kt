@@ -1,4 +1,4 @@
-package com.example.skillcinemaapp.domain.bar
+package com.example.skillcinemaapp.presentation.bar
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
@@ -21,14 +22,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.skillcinemaapp.R
-import com.example.skillcinemaapp.domain.graph.PageRoute
-import com.example.skillcinemaapp.ui.theme.mainColor
+import com.example.skillcinemaapp.presentation.navigation.Graph
+import com.example.skillcinemaapp.presentation.navigation.PageRoute
+import com.example.skillcinemaapp.presentation.ui.app.mainColor
 
 
 sealed class BottomBarItem(val route: String, val icon: Int) {
-    data object Home : BottomBarItem(PageRoute.Home.route, R.drawable.home_icon)
+    data object Home : BottomBarItem(Graph.HOME_GRAPH, R.drawable.home_icon)
     data object Search : BottomBarItem(PageRoute.Search.route, R.drawable.search_icon)
     data object Profile : BottomBarItem(PageRoute.Profile.route, R.drawable.profile_icon)
 }
@@ -50,8 +53,9 @@ fun BottomBar(navController: NavController) {
     BottomNavigation(
         backgroundColor = colorResource(id = R.color.white),
         modifier = Modifier
+            .shadow(8.dp, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-            .height(60.dp),
+            .height(60.dp)
     ) {
         Spacer(modifier = Modifier.padding(start = 40.dp))
 
@@ -83,7 +87,13 @@ fun RowScope.AddItems(
         },
         selected = isSelected,
         onClick = {
-            navController.navigate(item.route)
+            navController.navigate(item.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
         }
     )
 }

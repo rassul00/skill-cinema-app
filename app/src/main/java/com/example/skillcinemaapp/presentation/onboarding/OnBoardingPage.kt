@@ -1,4 +1,4 @@
-package com.example.skillcinemaapp.presentation
+package com.example.skillcinemaapp.presentation.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -22,9 +22,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.skillcinemaapp.R
-import com.example.skillcinemaapp.ui.theme.textButtonColor
-import com.example.skillcinemaapp.ui.theme.textColor
+import com.example.skillcinemaapp.presentation.navigation.Graph
+import com.example.skillcinemaapp.presentation.ui.app.textButtonColor
+import com.example.skillcinemaapp.presentation.ui.app.textColor
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -45,7 +47,7 @@ val onboardingItems = listOf(
 
 
 @Composable
-fun OnBoardingPage(onClick: () -> Unit) {
+fun OnBoardingPage(navController: NavController) {
 
     val pagerState = rememberPagerState{ onboardingItems.size }
     val coroutineScope = rememberCoroutineScope()
@@ -58,7 +60,13 @@ fun OnBoardingPage(onClick: () -> Unit) {
     ){
 
         item{
-            Header(onClick)
+            Header(onClick = {
+                navController.navigate(Graph.MAIN_GRAPH) {
+                    popUpTo(Graph.ONBOARDING_PAGE){
+                        inclusive = true
+                    }
+                }
+            })
         }
 
         item{

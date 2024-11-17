@@ -4,6 +4,12 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+
+    id("dagger.hilt.android.plugin")
+
 }
 
 android {
@@ -41,16 +47,31 @@ android {
     }
 }
 
+
 dependencies {
 
-    implementation(libs.accompanist.pager.indicators)
+
+    implementation (libs.ui)
+    implementation (libs.androidx.material)
+
     implementation(libs.androidx.navigation.compose)
 
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("io.coil-kt:coil-compose:2.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation(libs.accompanist.pager.indicators)
+
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.coil.compose)
+
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    kapt (libs.hilt.compiler)
+    implementation (libs.androidx.hilt.navigation.compose.v120)
 
 
     implementation(libs.androidx.core.ktx)
@@ -68,4 +89,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+kapt {
+    correctErrorTypes = true
 }

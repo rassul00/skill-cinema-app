@@ -1,4 +1,4 @@
-package com.example.skillcinemaapp.ui.theme
+package com.example.skillcinemaapp.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
