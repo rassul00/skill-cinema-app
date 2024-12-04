@@ -2,11 +2,11 @@ package com.example.skillcinemaapp.data.network
 
 
 import com.example.skillcinemaapp.data.model.Film
-import com.example.skillcinemaapp.data.model.Staff
 import com.example.skillcinemaapp.data.model.ResponseFilm
 import com.example.skillcinemaapp.data.model.ResponseFilmDetailImage
 import com.example.skillcinemaapp.data.model.ResponseFilmDetailSimilarFilm
 import com.example.skillcinemaapp.data.model.FilmDetailStaff
+import com.example.skillcinemaapp.data.model.Staff
 
 import retrofit2.http.GET
 

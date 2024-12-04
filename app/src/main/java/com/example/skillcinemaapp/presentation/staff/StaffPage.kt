@@ -162,7 +162,7 @@ fun StaffInfo(staff: Staff){
 @Composable
 fun BestFilms(navController: NavController, staffPageViewModel: StaffPageViewModel, films: List<StaffFilm>){
 
-    val filteredFilms = films.filter { it.name != null && it.rating != null && it.genres.isNotEmpty() && it.rating!! >= 8.0}
+    val filteredFilms = films.filter { it.name != null && it.rating != null && it.genres.isNotEmpty() && it.rating!! >= 7.0}
     Row(modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
