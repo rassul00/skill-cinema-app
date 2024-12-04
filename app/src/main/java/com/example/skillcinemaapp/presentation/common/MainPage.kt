@@ -1,4 +1,4 @@
-package com.example.skillcinemaapp.presentation
+package com.example.skillcinemaapp.presentation.common
 
 import android.annotation.SuppressLint
 import androidx.compose.material3.Scaffold

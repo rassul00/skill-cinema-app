@@ -21,11 +21,6 @@ sealed class HomeRoute(val route: String) {
             return "list_film/$category"
         }
     }
-    object FilmDetail : HomeRoute("film_detail/{$idOfFilm}") {
-        fun passId(idOfFilm: String): String {
-            return "film_detail/$idOfFilm"
-        }
-    }
 }
 
 

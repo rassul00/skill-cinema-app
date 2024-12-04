@@ -33,8 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,6 +46,7 @@ import com.example.skillcinemaapp.data.model.StaffFilm
 import com.example.skillcinemaapp.presentation.common.ErrorPage
 import com.example.skillcinemaapp.presentation.common.LoadingPage
 import com.example.skillcinemaapp.presentation.home.LabelRating
+import com.example.skillcinemaapp.presentation.home.ShowAllButton
 import com.example.skillcinemaapp.presentation.navigation.FilmDetailRoute
 import com.example.skillcinemaapp.presentation.navigation.StaffRoute
 import com.example.skillcinemaapp.presentation.ui.app.genreTextColor
@@ -143,7 +144,8 @@ fun StaffInfo(staff: Staff){
         Image(
             painter = rememberAsyncImagePainter(model = staff.poster),
             contentDescription = null,
-            modifier = Modifier.height(201.dp).width(146.dp).clip(RoundedCornerShape(4.dp))
+            modifier = Modifier.height(201.dp).width(146.dp).clip(RoundedCornerShape(4.dp)),
+            contentScale = ContentScale.Crop,
         )
         Column {
             Text(
@@ -162,7 +164,7 @@ fun StaffInfo(staff: Staff){
 @Composable
 fun BestFilms(navController: NavController, staffPageViewModel: StaffPageViewModel, films: List<StaffFilm>){
 
-    val filteredFilms = films.filter { it.name != null && it.rating != null && it.genres.isNotEmpty() && it.rating!! >= 8.0}
+    val filteredFilms = films.filter { it.name != null && it.rating != null && it.genres.isNotEmpty()}.sortedByDescending { it.rating }
     Row(modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -170,7 +172,7 @@ fun BestFilms(navController: NavController, staffPageViewModel: StaffPageViewMod
         Text(
             text = "Лучшее",
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = W500
         )
         Row(
             modifier = Modifier.clickable(onClick = {}),
@@ -205,6 +207,10 @@ fun BestFilms(navController: NavController, staffPageViewModel: StaffPageViewMod
                 ))
             })
         }
+        item{
+            ShowAllButton {  }
+        }
+
     }
 }
 
@@ -219,13 +225,13 @@ fun Filmography(staff: Staff, onClick: () -> Unit){
             Text(
                 text = "Фильмография",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = W500
             )
 
             Text(
                 text = "${staff.films.size} фильма",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = W500
             )
         }
 
@@ -235,7 +241,8 @@ fun Filmography(staff: Staff, onClick: () -> Unit){
         ){
             Text(
                 text = "К списку",
-                fontSize = 14.sp,
+                fontSize = 16.sp,
+                fontWeight = W400,
                 color = mainColor
             )
             Icon(

@@ -4,29 +4,27 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.skillcinemaapp.R
-
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,16 +35,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.skillcinemaapp.presentation.common.ErrorPage
-import com.example.skillcinemaapp.presentation.common.LoadingPage
+import com.example.skillcinemaapp.R
 import com.example.skillcinemaapp.data.model.Film
 import com.example.skillcinemaapp.data.model.FilmDetailImage
 import com.example.skillcinemaapp.data.model.FilmDetailSimilarFilm
 import com.example.skillcinemaapp.data.model.FilmDetailStaff
+import com.example.skillcinemaapp.data.room.Collection
+import com.example.skillcinemaapp.presentation.common.ErrorPage
+import com.example.skillcinemaapp.presentation.common.LoadingPage
 import com.example.skillcinemaapp.presentation.home.LabelRating
 import com.example.skillcinemaapp.presentation.navigation.FilmDetailRoute
 import com.example.skillcinemaapp.presentation.navigation.StaffRoute
@@ -59,9 +63,9 @@ import com.example.skillcinemaapp.presentation.ui.app.textColor
 @Composable
 fun FilmDetailPage(
     navController: NavController,
-    filmDetailViewModel: FilmDetailViewModel = hiltViewModel()
+    filmDetailPageViewModel: FilmDetailPageViewModel = hiltViewModel()
 ) {
-    val uiState by filmDetailViewModel.filmDetailUiState.collectAsState()
+    val uiState by filmDetailPageViewModel.filmDetailUiState.collectAsState()
 
     when(uiState){
         is FilmDetailUiState.Loading -> LoadingPage(modifier = Modifier.fillMaxSize())
@@ -89,22 +93,22 @@ fun FilmDetailPage(
                     verticalArrangement = Arrangement.spacedBy(30.dp)
                 ) {
                     item {
-                        FilmDescription(navController, filmDetailViewModel, uiState.film)
+                        FilmDescription(navController, filmDetailPageViewModel, uiState.film, uiState.collections)
                     }
                     item {
                         AboutFilm(uiState.film)
                     }
                     item {
-                        FilmStars(navController, filmDetailViewModel, starList)
+                        FilmStars(navController, filmDetailPageViewModel, starList)
                     }
                     item {
-                        WorkWithFilm(navController, filmDetailViewModel, workWithList)
+                        WorkWithFilm(navController, filmDetailPageViewModel, workWithList)
                     }
                     item {
                         GalleryFilm(
                             uiState.images,
                             onClick = {
-                                filmDetailViewModel.onEvent(
+                                filmDetailPageViewModel.onEvent(
                                     FilmDetailIntent.NavigateToGallery(
                                         navigateToGallery = {
                                             navController.navigate(FilmDetailRoute.Gallery.passId(uiState.film.id.toString()))
@@ -122,7 +126,7 @@ fun FilmDetailPage(
                     CenterAlignedTopAppBar(
                         navigationIcon = {
                             IconButton(onClick = {
-                                filmDetailViewModel.onEvent(
+                                filmDetailPageViewModel.onEvent(
                                     FilmDetailIntent.NavigateToBack(
                                         navigateToBack = {
                                             navController.popBackStack()
@@ -159,8 +163,15 @@ fun FilmDetailPage(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilmDescription(navController: NavController, filmDetailViewModel: FilmDetailViewModel, film: Film) {
+fun FilmDescription(navController: NavController, filmDetailViewModel: FilmDetailPageViewModel, film: Film, collections: List<Collection>) {
+
+    val sheetState = rememberModalBottomSheetState()
+    var isSheetOpen by remember { mutableStateOf(false) }
+
+    val isFilmInCollection by filmDetailViewModel.isFilmInCollection.collectAsState(emptyMap())
+
     Box(modifier = Modifier
         .fillMaxWidth()
         .height(400.dp)
@@ -203,7 +214,8 @@ fun FilmDescription(navController: NavController, filmDetailViewModel: FilmDetai
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            val ageLimit = film.ageLimit?.takeLast(2)?.plus("+") ?: ""
+
+            val ageLimit = film.ageLimit!!.removePrefix("age")
 
             Text(
                 text = "${film.rating} ${film.name}\n" +
@@ -223,17 +235,57 @@ fun FilmDescription(navController: NavController, filmDetailViewModel: FilmDetai
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Spacer(modifier = Modifier.padding(start = 50.dp))
-                IconButton({}, R.drawable.like)
+                Spacer(modifier = Modifier.padding(start = 60.dp))
 
-                IconButton({}, R.drawable.favorite)
 
-                IconButton({}, R.drawable.hide)
+                val isInFavorite = isFilmInCollection[filmDetailViewModel.favoriteCollectionId] ?: false
 
-                IconButton({}, R.drawable.share)
+                IconBut(onClick = {
+                    if (isInFavorite){
+                        filmDetailViewModel.onEvent(FilmDetailIntent.DeleteFilmFromCollection(
+                            collectionId = filmDetailViewModel.favoriteCollectionId,
+                            filmId = film.id
+                        ))
+                    }
+                    else{
+                        filmDetailViewModel.onEvent(FilmDetailIntent.SaveFilmToCollection(
+                            collectionId = filmDetailViewModel.favoriteCollectionId,
+                            film = film
+                        ))
+                    }
+                },
+                    R.drawable.like,
+                    isInFavorite
+                )
 
-                IconButton({}, R.drawable.options)
-                Spacer(modifier = Modifier.padding(end = 50.dp))
+
+                val isInWatchLater = isFilmInCollection[filmDetailViewModel.watchLaterCollectionId] ?: false
+
+                IconBut(onClick = {
+                    if (isInWatchLater){
+                        filmDetailViewModel.onEvent(FilmDetailIntent.DeleteFilmFromCollection(
+                            collectionId = filmDetailViewModel.watchLaterCollectionId,
+                            filmId = film.id
+                        ))
+                    }
+                    else{
+                        filmDetailViewModel.onEvent(FilmDetailIntent.SaveFilmToCollection(
+                            collectionId = filmDetailViewModel.watchLaterCollectionId,
+                            film = film
+                        ))
+                    }
+                }, R.drawable.favorite,
+                    isInWatchLater
+                )
+
+                IconBut({}, R.drawable.hide, false)
+
+                IconBut({}, R.drawable.share, false )
+
+                IconBut(onClick = {
+                    isSheetOpen = true
+                }, R.drawable.options, false)
+                Spacer(modifier = Modifier.padding(end = 60.dp))
             }
         }
 
@@ -259,7 +311,184 @@ fun FilmDescription(navController: NavController, filmDetailViewModel: FilmDetai
         }
 
     }
+
+    var showDialog by remember { mutableStateOf(false) }
+
+    if(isSheetOpen){
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = {
+                isSheetOpen = false
+            },
+            containerColor = Color.White
+        ){
+
+            Column(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 26.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            ){
+                FilmCard(
+                    film = film
+                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.plus_collection),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "Добавить свою коллекцию",
+                        fontSize = 16.sp
+                    )
+                }
+
+
+                collections.forEach{ collection ->
+
+                    val isInCollection = isFilmInCollection[collection.id] ?: false
+
+                    var isChecked by remember { mutableStateOf(isInCollection) }
+
+                    Row(
+                        modifier = Modifier.padding(start = 24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        IconButton(
+                            onClick = {
+                                if (isChecked){
+                                    filmDetailViewModel.onEvent(FilmDetailIntent.DeleteFilmFromCollection(
+                                        collectionId = collection.id,
+                                        filmId = film.id
+                                    ))
+                                }
+                                else{
+                                    filmDetailViewModel.onEvent(FilmDetailIntent.SaveFilmToCollection(
+                                        collectionId = collection.id,
+                                        film = film
+                                    ))
+                                }
+                                isChecked = !isChecked
+                            },
+                            modifier = Modifier.size(25.dp)
+                        ){
+                            Icon(
+                                imageVector = if (isChecked) {
+                                    ImageVector.vectorResource(id = R.drawable.check_mark)
+                                } else {
+                                    ImageVector.vectorResource(id = R.drawable.place_for_mark)
+                                },
+                                contentDescription = null
+                            )
+                        }
+                        Text(
+                            text = collection.name,
+                            fontSize = 16.sp
+                        )
+
+
+                        Spacer(Modifier.weight(1f))
+
+                        Text(
+                            text = collection.collectionSize.toString(),
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.padding(start = 24.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    IconButton(
+                        onClick = {
+                            showDialog = true
+                        },
+                        modifier = Modifier.size(25.dp)
+                    ){
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.add),
+                            contentDescription = null
+                        )
+                    }
+                    Text(
+                        text = "Cоздать свою коллекцию",
+                        fontSize = 16.sp
+                    )
+                }
+            }
+
+        }
+    }
+
+
+    var collectionName by remember { mutableStateOf("") }
+
+    if (showDialog) {
+        Dialog(
+            onDismissRequest = { showDialog = false },
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .height(205.dp)
+                    .background(Color.White, shape = RoundedCornerShape(16.dp))
+                    .padding(10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                TextField(
+                    value = collectionName,
+                    onValueChange = { collectionName = it },
+                    placeholder = { Text("Придумайте название\nдля вашей новой коллекции") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp)
+                        .align(Alignment.TopStart),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent
+                    ),
+                    maxLines = 3
+                )
+
+                IconButton(
+                    onClick = { showDialog = false },
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.close),
+                        contentDescription = "Close"
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        filmDetailViewModel.onEvent(FilmDetailIntent.AddNewCollection(
+                            collectionName
+                        ))
+                        showDialog = false
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        containerColor = mainColor,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                ) {
+                    Text("Готово")
+                }
+            }
+        }
+    }
+
 }
+
+
+
 
 
 @Composable
@@ -280,12 +509,13 @@ fun AboutFilm(film: Film){
 
 
 @Composable
-fun IconButton(onClick: () -> Unit, icon: Int){
-    IconButton(onClick = onClick) {
+fun IconBut(onClick: () -> Unit, icon: Int, isInCollection: Boolean){
+
+    IconButton(onClick = onClick ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = icon),
             contentDescription = null,
-            tint = Color.White,
+            tint = if (isInCollection) mainColor else Color.White ,
             modifier = Modifier.size(24.dp)
         )
     }
@@ -294,27 +524,29 @@ fun IconButton(onClick: () -> Unit, icon: Int){
 
 
 @Composable
-fun FilmStars(navController: NavController, filmDetailViewModel: FilmDetailViewModel, filmDetailStaffs: List<FilmDetailStaff>){
+fun FilmStars(navController: NavController, filmDetailViewModel: FilmDetailPageViewModel, filmDetailStaffs: List<FilmDetailStaff>){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 26.dp, end = 26.dp, bottom = 10.dp)
-            .clickable(onClick = {}),
+            .padding(start = 26.dp, end = 26.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ){
         Text(
             text = "В фильме снимались" ,
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-
+            fontWeight = W500
         )
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .clickable(onClick = {}),
+            verticalAlignment = Alignment.CenterVertically,
+
         ){
             Text(
                 text = filmDetailStaffs.size.toString(),
-                fontSize = 14.sp,
+                fontSize = 16.sp,
+                fontWeight = W400,
                 color = mainColor
             )
             Icon(
@@ -344,7 +576,7 @@ fun FilmStars(navController: NavController, filmDetailViewModel: FilmDetailViewM
 
 
 @Composable
-fun WorkWithFilm(navController: NavController, filmDetailViewModel: FilmDetailViewModel, filmDetailStaffs: List<FilmDetailStaff>){
+fun WorkWithFilm(navController: NavController, filmDetailViewModel: FilmDetailPageViewModel, filmDetailStaffs: List<FilmDetailStaff>){
     Row(
         modifier = Modifier.fillMaxWidth().padding(start = 26.dp, end = 26.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -353,7 +585,7 @@ fun WorkWithFilm(navController: NavController, filmDetailViewModel: FilmDetailVi
         Text(
             text = "Над фильмом работали" ,
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = W500
 
         )
 
@@ -363,7 +595,8 @@ fun WorkWithFilm(navController: NavController, filmDetailViewModel: FilmDetailVi
         ){
             Text(
                 text = filmDetailStaffs.size.toString(),
-                fontSize = 14.sp,
+                fontSize = 16.sp,
+                fontWeight = W400,
                 color = mainColor
             )
             Icon(
@@ -399,7 +632,7 @@ fun GalleryFilm(images: List<FilmDetailImage>, onClick: () -> Unit){
         Text(
             text = "Галерея",
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = W500
         )
 
 
@@ -409,7 +642,8 @@ fun GalleryFilm(images: List<FilmDetailImage>, onClick: () -> Unit){
         ){
             Text(
                 text = images.size.toString(),
-                fontSize = 14.sp,
+                fontSize = 16.sp,
+                fontWeight = W400,
                 color = mainColor
             )
             Icon(
@@ -432,9 +666,9 @@ fun GalleryFilm(images: List<FilmDetailImage>, onClick: () -> Unit){
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(108.dp)
-                    .width(192.dp),
-                elevation = CardDefaults.elevatedCardElevation(2.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.LightGray)
+                    .width(192.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                elevation = CardDefaults.elevatedCardElevation(2.dp)
             ) {
                 Image(
                     painter = rememberAsyncImagePainter(model = images[index].image),
@@ -464,7 +698,7 @@ fun SimilarFilms(filmDetailSimilarFilms: List<FilmDetailSimilarFilm>){
         Text(
             text = "Похожие фильмы",
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = W500
         )
 
 
@@ -474,7 +708,8 @@ fun SimilarFilms(filmDetailSimilarFilms: List<FilmDetailSimilarFilm>){
         ){
             Text(
                 text = filmDetailSimilarFilms.size.toString(),
-                fontSize = 14.sp,
+                fontSize = 16.sp,
+                fontWeight = W400,
                 color = mainColor
             )
 
@@ -500,7 +735,7 @@ fun SimilarFilms(filmDetailSimilarFilms: List<FilmDetailSimilarFilm>){
 
 
 @Composable
-fun StaffCard(navController: NavController, filmDetailViewModel: FilmDetailViewModel, filmDetailStaff: FilmDetailStaff, description: String){
+fun StaffCard(navController: NavController, filmDetailViewModel: FilmDetailPageViewModel, filmDetailStaff: FilmDetailStaff, description: String){
     Row(modifier = Modifier
         .width(207.dp)
         .height(68.dp)
@@ -521,7 +756,9 @@ fun StaffCard(navController: NavController, filmDetailViewModel: FilmDetailViewM
             modifier = Modifier
                 .clip(RoundedCornerShape(4.dp))
                 .width(49.dp)
-                .height(68.dp)
+                .height(68.dp),
+
+            contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.padding(end = 16.dp))
 
@@ -577,5 +814,51 @@ fun FilmCard(film: FilmDetailSimilarFilm, onClick: () -> Unit){
             fontWeight = W400,
             color = genreTextColor
         )
+    }
+}
+
+
+@Composable
+fun FilmCard(film: Film){
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(156.dp),
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .width(111.dp)
+                .height(156.dp)
+        ){
+            Image(
+                painter = rememberAsyncImagePainter(model = film.poster),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            film.rating?.let { LabelRating(it) }
+        }
+
+        Column {
+            Text(
+                text = film.name.orEmpty(),
+                fontSize = 14.sp,
+                fontWeight = W400,
+                color = textColor,
+                modifier = Modifier.padding(bottom = 5.dp)
+            )
+
+            Text(
+                text = film.genres.firstOrNull()?.genre.orEmpty(),
+                fontSize = 14.sp,
+                fontWeight = W400,
+                color = genreTextColor
+            )
+        }
     }
 }

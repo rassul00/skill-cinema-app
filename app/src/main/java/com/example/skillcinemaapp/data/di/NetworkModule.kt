@@ -27,7 +27,7 @@ object NetworkModule {
         return Interceptor { chain ->
             val request = chain.request().newBuilder()
                 .addHeader("X-API-KEY", API_KEY)
-                .addHeader("Content-Type", "application/json")
+                //.addHeader("Content-Type", "application/json")
                 .build()
             chain.proceed(request)
         }

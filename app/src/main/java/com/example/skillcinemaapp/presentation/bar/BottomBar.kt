@@ -26,14 +26,13 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.skillcinemaapp.R
 import com.example.skillcinemaapp.presentation.navigation.Graph
-import com.example.skillcinemaapp.presentation.navigation.PageRoute
 import com.example.skillcinemaapp.presentation.ui.app.mainColor
 
 
 sealed class BottomBarItem(val route: String, val icon: Int) {
     data object Home : BottomBarItem(Graph.HOME_GRAPH, R.drawable.home_icon)
-    data object Search : BottomBarItem(PageRoute.Search.route, R.drawable.search_icon)
-    data object Profile : BottomBarItem(PageRoute.Profile.route, R.drawable.profile_icon)
+    data object Search : BottomBarItem(Graph.SEARCH_GRAPH, R.drawable.search_icon)
+    data object Profile : BottomBarItem(Graph.PROFILE_GRAPH, R.drawable.profile_icon)
 }
 
 

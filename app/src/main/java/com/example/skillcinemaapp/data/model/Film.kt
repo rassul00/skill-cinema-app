@@ -39,5 +39,6 @@ data class Genre(
 
 @Serializable
 data class Country(
+    @SerialName("country")
     val country: String
 )

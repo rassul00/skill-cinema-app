@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -31,8 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,6 +44,7 @@ import com.example.skillcinemaapp.R
 import com.example.skillcinemaapp.presentation.common.ErrorPage
 import com.example.skillcinemaapp.presentation.common.LoadingPage
 import com.example.skillcinemaapp.data.model.Film
+import com.example.skillcinemaapp.presentation.navigation.FilmDetailRoute
 import com.example.skillcinemaapp.presentation.navigation.HomeRoute
 import com.example.skillcinemaapp.presentation.ui.app.genreTextColor
 import com.example.skillcinemaapp.presentation.ui.app.mainColor
@@ -113,7 +116,7 @@ fun CategoryWithFilmsRow(
             FilmCard(filteredFilms[index]) {
                 viewModel.onEvent(
                     HomeIntent.NavigateToFilmDetail {
-                        navController.navigate(HomeRoute.FilmDetail.passId(filteredFilms[index].id.toString()))
+                        navController.navigate(FilmDetailRoute.FilmDetail.passId(filteredFilms[index].id.toString()))
                     }
                 )
             }
@@ -156,7 +159,7 @@ fun CategoryHeader(category: String, onClick: () -> Unit){
         Text(
             text = category,
             fontSize = 18.sp,
-            fontWeight = FontWeight.W600,
+            fontWeight = W500,
             color = textColor
         )
 
@@ -217,16 +220,20 @@ fun ShowAllButton(onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .width(111.dp)
-            .height(156.dp)
-            .clickable(onClick = onClick),
+            .height(156.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.arrow_right),
-            tint = mainColor,
-            contentDescription = null
-        )
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.size(25.dp)
+        ){
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.arrow_right),
+                tint = mainColor,
+                contentDescription = null
+            )
+        }
         Text("Показать все", fontSize = 12.sp, color = textColor, fontWeight = W400)
     }
 }

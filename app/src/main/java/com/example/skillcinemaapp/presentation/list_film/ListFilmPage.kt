@@ -32,7 +32,7 @@ import com.example.skillcinemaapp.R
 import com.example.skillcinemaapp.presentation.common.ErrorPage
 import com.example.skillcinemaapp.presentation.common.LoadingPage
 import com.example.skillcinemaapp.presentation.home.FilmCard
-import com.example.skillcinemaapp.presentation.navigation.HomeRoute
+import com.example.skillcinemaapp.presentation.navigation.FilmDetailRoute
 import com.example.skillcinemaapp.presentation.ui.app.mainColor
 
 
@@ -40,11 +40,11 @@ import com.example.skillcinemaapp.presentation.ui.app.mainColor
 fun ListFilmPage(
     navController: NavController,
     listFilmPageViewModel: ListFilmPageViewModel = hiltViewModel()
-){
+) {
 
     val uiState by listFilmPageViewModel.listFilmUiState.collectAsState()
 
-    when(uiState) {
+    when (uiState) {
         is ListFilmUiState.Loading -> LoadingPage(modifier = Modifier.fillMaxSize())
         is ListFilmUiState.Success -> {
             val films = (uiState as ListFilmUiState.Success).films
@@ -55,14 +55,13 @@ fun ListFilmPage(
                         onBackClick = {
                             listFilmPageViewModel.onEvent(ListFilmIntent.NavigateToBack(
                                 navigateToBack = {
-                                    navController.popBackStack(HomeRoute.Home.route, inclusive = false)
+                                    navController.popBackStack()
                                 }
                             ))
                         }
                     )
                 }
             ) { paddingValues ->
-
 
 
                 LazyVerticalGrid(
@@ -83,7 +82,11 @@ fun ListFilmPage(
                                 listFilmPageViewModel.onEvent(
                                     ListFilmIntent.NavigateToFilmDetail(
                                         navigateToFilmDetail = {
-                                            navController.navigate(HomeRoute.FilmDetail.passId(films[index].id.toString()))
+                                            navController.navigate(
+                                                FilmDetailRoute.FilmDetail.passId(
+                                                    films[index].id.toString()
+                                                )
+                                            )
                                         }
                                     )
                                 )
@@ -93,31 +96,31 @@ fun ListFilmPage(
                 }
             }
         }
+
         is ListFilmUiState.Error -> ErrorPage(modifier = Modifier.fillMaxSize())
     }
 }
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Header(category: String, onBackClick: () -> Unit){
+fun Header(text: String, onBackClick: () -> Unit) {
     CenterAlignedTopAppBar(
         navigationIcon = {
-            IconButton(onClick = onBackClick){
+            IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.back),
                     contentDescription = null,
                     tint = mainColor,
                     modifier = Modifier
-                        .padding(start = 10.dp)
+                        .padding(start = 11.dp)
                 )
             }
 
         },
         title = {
             Text(
-                text = category,
+                text = text,
                 fontSize = 18.sp
             )
 
