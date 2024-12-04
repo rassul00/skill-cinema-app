@@ -20,7 +20,7 @@ class FilmographyPageViewModel @Inject constructor(val repository : RepositoryIm
     val filmographyUiState: StateFlow<FilmographyUiState> = _filmographyUiState
 
 
-    var staffId = savedStateHandle.get<String>("staffId") ?: ""
+    private var staffId = savedStateHandle.get<String>("staffId") ?: ""
 
     init{
         onEvent(FilmographyIntent.Load)
