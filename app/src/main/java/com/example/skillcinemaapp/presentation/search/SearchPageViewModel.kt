@@ -57,7 +57,7 @@ class SearchPageViewModel @Inject constructor(val repository : RepositoryImpl) :
         viewModelScope.launch {
             try {
                 _searchQuery
-                    .debounce(700)
+                    .debounce(500)
                     .collectLatest { keyword ->
                         if (keyword.isNotEmpty()) {
                             val films = repository.getFilmsByKeyword(keyword)

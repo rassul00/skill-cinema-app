@@ -61,7 +61,7 @@ fun SearchPage(
 
     val uiState by searchPageViewModel.searchUiState.collectAsState()
 
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by remember { mutableStateOf(searchPageViewModel.searchQuery.value) }
 
     Scaffold(
         topBar = {

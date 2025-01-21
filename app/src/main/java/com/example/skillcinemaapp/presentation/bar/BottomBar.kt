@@ -52,7 +52,6 @@ fun BottomBar(navController: NavController) {
     BottomNavigation(
         backgroundColor = colorResource(id = R.color.white),
         modifier = Modifier
-            .shadow(8.dp, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .height(60.dp)
     ) {
@@ -88,10 +87,11 @@ fun RowScope.AddItems(
         onClick = {
             navController.navigate(item.route) {
                 popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
+                    inclusive = true
+                    //saveState = true
                 }
                 launchSingleTop = true
-                restoreState = true
+                //restoreState = true
             }
         }
     )

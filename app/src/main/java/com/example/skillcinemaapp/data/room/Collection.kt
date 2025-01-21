@@ -2,7 +2,6 @@ package com.example.skillcinemaapp.data.room
 
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 
@@ -31,9 +30,7 @@ data class LocalFilm(
 )
 
 
-@Entity(
-    tableName = "film_collection"
-)
+@Entity(tableName = "film_collection")
 data class FilmCollection(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val filmId: Int,

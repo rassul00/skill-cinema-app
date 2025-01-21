@@ -93,7 +93,7 @@ fun PeriodPage(navController: NavController, periodPageViewModel: PeriodPageView
 
                     item{
                         Text(
-                            text = "Искать с в период с",
+                            text = "Искать с в период с $yearFrom",
                             fontSize = 16.sp,
                             color = Color.Gray
                         )
@@ -175,7 +175,7 @@ fun PeriodPage(navController: NavController, periodPageViewModel: PeriodPageView
 
                     item{
                         Text(
-                            text = "Искать в период до",
+                            text = "Искать в период до $yearTo",
                             fontSize = 16.sp,
                             color = Color.Gray
                         )

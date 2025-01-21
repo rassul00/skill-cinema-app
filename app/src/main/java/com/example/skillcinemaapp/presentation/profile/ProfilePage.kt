@@ -51,23 +51,24 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.skillcinemaapp.R
 import com.example.skillcinemaapp.data.room.LocalFilm
 import com.example.skillcinemaapp.presentation.common.ErrorPage
-import com.example.skillcinemaapp.presentation.common.LoadingPage
 import com.example.skillcinemaapp.presentation.home.LabelRating
 import com.example.skillcinemaapp.presentation.navigation.ProfileRoute
 import com.example.skillcinemaapp.presentation.ui.app.genreTextColor
 import com.example.skillcinemaapp.presentation.ui.app.mainColor
 import com.example.skillcinemaapp.presentation.ui.app.textColor
 import com.example.skillcinemaapp.data.room.Collection
+import com.example.skillcinemaapp.presentation.common.LoadingPage
 
 @Composable
 fun ProfilePage(navController: NavController, profilePageViewModel: ProfilePageViewModel = hiltViewModel()){
 
     val uiState by profilePageViewModel.profileUiState.collectAsState()
-    
+
 
     when (uiState) {
         is ProfileUiState.Initial -> {
-            profilePageViewModel.onEvent(ProfileIntent.Load)
+            LoadingPage(modifier = Modifier.fillMaxSize())
+            //profilePageViewModel.onEvent(ProfileIntent.Load)
         }
         is ProfileUiState.Success -> {
             val uiState = uiState as ProfileUiState.Success

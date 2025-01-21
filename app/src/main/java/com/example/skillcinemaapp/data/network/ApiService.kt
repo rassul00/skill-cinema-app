@@ -16,11 +16,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 const val BASE_URL = "https://kinopoiskapiunofficial.tech/"
-//const val API_KEY = "68070a5f-ae6b-49ca-b200-440015fb8b3f"
-const val API_KEY = "be4dd998-de12-437e-8693-d6be4002ed9e"
-//const val API_KEY = "16e3abeb-1d11-4818-a0f0-e113af2c8874"
-//const val API_KEY = "64b7de10-e029-4d26-b33f-57f450ef348b"
-//const val API_KEY = "73c604d2-a930-425a-809c-f1c9fe5da228"
+const val API_KEY = "68070a5f-ae6b-49ca-b200-440015fb8b3f"
 
 interface ApiService {
 

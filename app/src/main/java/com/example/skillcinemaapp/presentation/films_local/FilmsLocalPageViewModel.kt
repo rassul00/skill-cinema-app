@@ -52,13 +52,6 @@ class FilmsLocalPageViewModel @Inject constructor(val repository: RepositoryImpl
                             }
 
                         }
-//                    val films = repository.getFilmsByCollectionId(collectionId = collectionId).first()
-//
-//                    (_filmsLocalUiState.value as? FilmsLocalUiState.Success)?.let {
-//                        _filmsLocalUiState.value = (it).copy(
-//                            films = films
-//                        )
-//                    }
                 }
             }
         }
@@ -76,7 +69,6 @@ class FilmsLocalPageViewModel @Inject constructor(val repository: RepositoryImpl
                         _filmsLocalUiState.value = FilmsLocalUiState.Success(collectionId = collectionId, collectionName = collectionName, films = films)
                     }
 
-                //val films = repository.getFilmsByCollectionId(collectionId).first()
 
             } catch (_: IOException) {
                 FilmsLocalUiState.Error

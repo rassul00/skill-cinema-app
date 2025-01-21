@@ -34,7 +34,12 @@ object DatabaseModule {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
                     CoroutineScope(Dispatchers.IO).launch {
-                        val collectionDao = provideDatabase(context).collectionDao()
+                        val database = Room.databaseBuilder(
+                            context,
+                            CollectionDatabase::class.java,
+                            "skill_cinema_app.db"
+                        ).build()
+                        val collectionDao = database.collectionDao()
                         val defaultCollections = listOf(
                             Collection(name = "Просмотрено"),
                             Collection(name = "Любимое"),

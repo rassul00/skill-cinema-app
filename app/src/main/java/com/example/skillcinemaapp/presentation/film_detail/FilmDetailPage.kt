@@ -206,7 +206,7 @@ fun FilmDescription(navController: NavController, filmDetailViewModel: FilmDetai
             Text(
                 text = if(film.nameOriginal != null) film.nameOriginal else film.name.orEmpty(),
                 color = Color.White,
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
                 letterSpacing = 2.sp,
@@ -215,7 +215,7 @@ fun FilmDescription(navController: NavController, filmDetailViewModel: FilmDetai
             Spacer(modifier = Modifier.height(10.dp))
 
 
-            val ageLimit = film.ageLimit!!.removePrefix("age")
+            val ageLimit = film.ageLimit?.removePrefix("age")
 
             Text(
                 text = "${film.rating} ${film.name}\n" +

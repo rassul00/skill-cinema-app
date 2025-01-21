@@ -19,8 +19,9 @@ class ProfilePageViewModel @Inject constructor(val repository : RepositoryImpl) 
     private val _profileUiState = MutableStateFlow<ProfileUiState>(ProfileUiState.Initial)
     val profileUiState: StateFlow<ProfileUiState> = _profileUiState
 
-
-
+    init {
+        get()
+    }
 
     fun onEvent(event: ProfileIntent) {
         when (event) {
@@ -62,7 +63,6 @@ class ProfilePageViewModel @Inject constructor(val repository : RepositoryImpl) 
                             }
 
                         }
-//                    withContext(Dispatchers.Main)
 
 
                 }

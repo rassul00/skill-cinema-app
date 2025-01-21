@@ -14,9 +14,6 @@ class PeriodPageViewModel @Inject constructor() : ViewModel() {
     private val _periodUiState = MutableStateFlow<PeriodUiState>(PeriodUiState.Success)
     val periodUiState: StateFlow<PeriodUiState> = _periodUiState
 
-
-
-
     fun onEvent(event: PeriodIntent) {
         when (event) {
             is PeriodIntent.NavigateToBack -> {
